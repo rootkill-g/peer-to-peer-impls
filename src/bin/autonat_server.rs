@@ -1,8 +1,13 @@
 use clap::Parser;
-use futures::StreamExt;
+use futures::prelude::*;
 use libp2p::{
-    autonat, core::upgrade::Version, identify, identity, noise, swarm::{NetworkBehaviour, SwarmBuilder, SwarmEvent}, tcp,
-    yamux, PeerId, Transport, Multiaddr, multiaddr::Protocol,
+    autonat,
+    core::upgrade::Version,
+    identify, identity,
+    multiaddr::Protocol,
+    noise,
+    swarm::{NetworkBehaviour, SwarmBuilder, SwarmEvent},
+    tcp, yamux, Multiaddr, PeerId, Transport,
 };
 use std::{error::Error, net::Ipv4Addr};
 
@@ -30,17 +35,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .boxed();
     let behaviour = Behaviour::new(local_key.public());
 
-    let mut swarm = SwarmBuilder::with_async_std_executor(transport, behaviour, local_peer_id).build();
+    let mut swarm =
+        SwarmBuilder::with_async_std_executor(transport, behaviour, local_peer_id).build();
 
     swarm.listen_on(
-        Multiaddr::empty().with(Protocol::Ip4(Ipv4Addr::UNSPECIFIED)).with(Protocol::Tcp(opt.listen_port.unwrap_or(0)))
+        Multiaddr::empty()
+            .with(Protocol::Ip4(Ipv4Addr::UNSPECIFIED))
+            .with(Protocol::Tcp(opt.listen_port.unwrap_or(0))),
     )?;
 
     loop {
         match swarm.select_next_some().await {
             SwarmEvent::NewListenAddr { address, .. } => println!("Listening on : {address:?}"),
             SwarmEvent::Behaviour(event) => println!("{event:?}"),
-            e => println!("{e:?}")
+            e => println!("{e:?}"),
         }
     }
 }
