@@ -1,0 +1,14 @@
+[package]
+name = "chat-app"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-std = { version = "1.12.0", features = ["attributes"] }
+async-trait = "0.1.68"
+env_logger = "0.10.0"
+futures = "0.3.28"
+libp2p = { version = "0.52.0", features = ["async-std", "gossipsub", "mdns", "noise", "macros", "tcp", "yamux"] }
+libp2p-quic = { version = "0.6.1" }
